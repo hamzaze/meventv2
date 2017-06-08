@@ -972,7 +972,6 @@ myApp.onPageInit('discussion', function (page) {
 
 myApp.onPageAfterBack('index', function(page){
     console.log("we are back to index, again");
-    alert("it should work");
 });
 
 myApp.onPageInit('index', function (page) {
