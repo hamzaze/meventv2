@@ -40,7 +40,7 @@ var mainView = myApp.addView('.view-main', {
 var isAjaxLoaded=false;
 var isAjaxLoadedLoop=false;
 var pathToAjaxDispatcher="http://www.meridianleadershipconference.com/php/ajaxDispatcher1.php";
-var reloadDiscussionEvery=10000;
+var reloadDiscussionEvery=15000;
 var autoloadWelcomeTemplateEvery=1000*60*3;
 
 var akaLocalStorageWelcomeTemplate=null;
@@ -961,10 +961,10 @@ $$(document).on("click", "a[data-action='addedititem']", function(e){
 
 // In page callbacks:
 myApp.onPageInit('discussion', function (page) {
-    autoLoadCurrentDiscussion(page.context.id);
+    autoLoadCurrentDiscussion(page.context.id, true);
     $$('.page-content').scrollTop($$('#bottomOfMessages').offset().top, 0);
     discussionLoadInterval=window.setInterval(function(){
-        autoLoadCurrentDiscussion(page.context.id);
+        autoLoadCurrentDiscussion(page.context.id, false);
     }, reloadDiscussionEvery);
     
   // "page" variable contains all required information about loaded and initialized page 
@@ -1404,7 +1404,7 @@ function autoLoadCurrentPoll(id){
     });
 }
 
-function autoLoadCurrentDiscussion(id){
+function autoLoadCurrentDiscussion(id, isAjaxLoader){
     var currentPage=mainView.activePage.name;
     if(currentPage!="discussion"){
         window.clearInterval(discussionLoadInterval);
@@ -1413,7 +1413,9 @@ function autoLoadCurrentDiscussion(id){
     }
     if(isAjaxLoaded) return false;
     isAjaxLoaded=true;
-    displayActionLoader();
+    if(isAjaxLoader){
+        displayActionLoader();
+    }
     var postData={id: id, context: "loadCurrentDiscussion"};
     
     $$.ajax({
@@ -1423,7 +1425,9 @@ function autoLoadCurrentDiscussion(id){
        dataType: "json",
        success: function(data){
            isAjaxLoaded=false;
-           removeActionLoader();
+           if(isAjaxLoader){
+                removeActionLoader();
+            }
                if(data["success"]==1){
                    $$("#wrapDiscussionPosts[data-id='"+id+"'] > div.bodytext").html("").append($$(data["content"]));
                    
@@ -1434,7 +1438,9 @@ function autoLoadCurrentDiscussion(id){
                         targetItem.attr("data-counter", newCounter).find("span[data-target='topiclist']").text(newCounter);
                         
                         });
-                        $$('.page-content').scrollTop($$('#bottomOfMessages').offset().top, 0);
+                        if(isAjaxLoader){
+                            $$('.page-content').scrollTop($$('#bottomOfMessages').offset().top, 0);
+                        }
                        //$$('.page-content').scrollTop($$('#bottomOfMessages').offset().top, 0);
                     }, 200);
                    
@@ -1442,7 +1448,9 @@ function autoLoadCurrentDiscussion(id){
                }
             return false;
        }, error: function(){
-           removeActionLoader();
+           if(isAjaxLoader){
+                removeActionLoader();
+            }
            isAjaxLoaded=false;
        }
     });

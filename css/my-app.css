@@ -818,6 +818,10 @@ div#wrapAttendees.wrapAttractions div.item div.flex1 i.abs{
     right: 0;
 }
 
+div#wrapAttendees.wrapAttractions div.wrappAlphabetBlock div.item div.flex1 i.abs{
+    right: 1rem;
+}
+
 div#wrapME.wrapAttractions textarea.mf-textarea{
     height: 50px;
 }
