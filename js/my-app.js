@@ -887,7 +887,10 @@ $$(document).on("click", "a[data-action='addedititem']", function(e){
     }
     if(postData["context"]=="wrapCustomPage"){
         $$(".views").addClass("overflow");
-        $$("#superTransitionEffect").css({"background-color": $this.attr("data-bgcolor")}).addClass("bigCircleForTransition");
+        //$$("#superTransitionEffect").css({"background-color": $this.attr("data-bgcolor")}).addClass("bigCircleForTransition");
+        if(postData["id"]==46){
+            displayActionLoader();
+        }
     }
     
     $$.ajax({
@@ -901,24 +904,27 @@ $$(document).on("click", "a[data-action='addedititem']", function(e){
                    if(postData["context"]=="wrapCustomPage"){
                        setTimeout(function(){
                             $$("#superTransitionEffect").addClass("zeroopacity");
+                            
                                     mainView.router.load({
                                      template: Template7.templates.customPageTemplate,
-                                     animatePages: false,
+                                     animatePages: true,
                                      reload: false,
                                      context: data
                                  });
-                         window.setTimeout(function(){
-                            $$("#superTransitionEffect").removeClass("bigCircleForTransition");
-                            $this.closest(".flip-container").removeClass("hover");
+                                 
                             if(postData["id"]==46){
                                 $$(document).detectWithScroll();
                             }else if(postData["id"]==44){
                                 $$(document).detectWithScroll1();
                             }
-                            window.setTimeout(function(){
-                                $$("#superTransitionEffect").removeClass("zeroopacity");
-                            }, 1500);
-                         }, 1500);
+                            if(postData["id"]==46){
+                                removeActionLoader();
+                            }
+                            
+                         window.setTimeout(function(){
+                            $this.closest(".flip-container").removeClass("hover");
+                            
+                         }, 500);
                        }, 300);
                     }else if(postData["context"]=="wrapAddNewUserNote"){
                         $this.attr("data-title", "");
@@ -1519,5 +1525,8 @@ function displayActionLoader(){
 }
 
 function removeActionLoader(){
-    $$("body > div.overlayWhite").remove();
+    $$("body > div.overlayWhite").addClass("passive");
+    window.setTimeout(function(){
+        $$("body > div.overlayWhite").remove();
+    }, 800);
 }

@@ -51,6 +51,13 @@ div.overlayWhite{
     z-index: 20001;
 }
 
+div.overlayWhite.passive{
+    opacity: 0;
+     transition: opacity 0.7s ease-out 0.2s;
+    -moz-transition: opacity 0.7s ease-out 0.2s;
+    -webkit-transition: opacity 0.7s ease-out 0.2s;
+}
+
 div.ajaxLoader{
     z-index: 20010
 }
