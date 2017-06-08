@@ -39,7 +39,7 @@ var mainView = myApp.addView('.view-main', {
 
 var isAjaxLoaded=false;
 var isAjaxLoadedLoop=false;
-var pathToAjaxDispatcher="http://www.meridianleadershipconference.com/php/ajaxDispatcher.php";
+var pathToAjaxDispatcher="http://www.meridianleadershipconference.com/php/ajaxDispatcher1.php";
 var reloadDiscussionEvery=10000;
 var autoloadWelcomeTemplateEvery=1000*60*3;
 
@@ -1033,6 +1033,11 @@ myApp.onPageInit('agenda', function (page) {
     autoLoadCurrentAgenda(page.context.id);
 });
 
+myApp.onPageInit('survey', function (page) {
+    console.log('survey page initialized =' + page.context.id);
+    autoLoadCurrentSurvey(page.context.id);
+});
+
 myApp.onPageInit('poll', function (page) {
     console.log('poll page initialized');
    if($$("div.page-poll").length>0){
@@ -1271,6 +1276,36 @@ function autoLoadWelcomeTemplate(){
     });
 }
 
+function autoLoadCurrentSurvey(id){
+    if(isAjaxLoaded) return false;
+    isAjaxLoaded=true;
+    var postData={id: id, context: "loadCurrentSurvey"};
+    
+    $$.ajax({
+       type: "POST",
+       url: pathToAjaxDispatcher,
+       data: postData,
+       dataType: "json",
+       success: function(data){
+           isAjaxLoaded=false;
+               if(data["success"]==1){
+                   if($$("[data-target='ifnosurvey'] > div.ifnosurvey").length>0){
+                      $$("[data-target='ifnosurvey'] > div.ifnosurvey").remove(); 
+                   }
+                   if(data['ifnosurvey']){
+                       $$("[data-target='ifnosurvey']").prepend(data["ifnosurvey"]);
+                   }
+                   $$("[data-target='surveyquestions']").html(data["surveyquestions"]);
+                   $$("[data-target='surveyagendatop']").html(data["surveyagendatop"]);
+               }else{
+                   
+               }
+           }, error: function(){
+           isAjaxLoaded=false;
+       }
+   });
+}
+
 function autoLoadCurrentAgenda(id){
     if(isAjaxLoaded) return false;
     isAjaxLoaded=true;
@@ -1285,6 +1320,9 @@ function autoLoadCurrentAgenda(id){
            isAjaxLoaded=false;
                if(data["success"]==1){
                    $$("[data-target='mapphoto']").html(data["mapimage"]);
+                   if(data["speakerdetails"]){
+                       $$("[data-target='speakerdetails']").html(data["speakerdetails"]);
+                   }
                    
                     var photo=$$("div.wrapAgendaDetails [data-action='openphotoinpopup']").attr("data-src");
                     var myPhotoBrowserPopup = myApp.photoBrowser({
